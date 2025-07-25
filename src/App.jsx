@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
+import CompleteProfile from './components/CompleteProfile';
 import Signup from './components/Signup';
 import Login from './components/Login';
 
@@ -10,6 +11,7 @@ function App() {
         <Route exact path="/" component={Login} />
         <Route path="/signup" component={Signup} />
         <Route path="/home" component={Home} />
+        <Route path="/complete-profile" component={CompleteProfile} />
       </Switch>
     </Router>
   );
