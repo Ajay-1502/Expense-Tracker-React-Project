@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +10,6 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [existingUser, setExistingUser] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -118,13 +118,12 @@ const Signup = () => {
 
         <div className="text-center mt-3">
           <span className="text-muted">Have an account? </span>
-          <a
-            href="#"
+          <Link
+            to="/"
             className="text-decoration-none fw-semibold text-primary"
-            onClick={() => setExistingUser(true)}
           >
             Login
-          </a>
+          </Link>
         </div>
       </div>
 

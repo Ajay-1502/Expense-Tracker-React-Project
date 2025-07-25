@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import Home from './Home';
+import { Link, useHistory } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -7,6 +11,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const tokenId = localStorage.getItem('token');
+  const history = useHistory();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -39,9 +46,11 @@ const Login = () => {
       }
       const data = await response.json();
       console.log(data);
-      alert('Login Successful 🎉');
+      localStorage.setItem('token', data.idToken);
+      toast.success('Login Successful 🎉');
+      history.push('/home');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   }
 
@@ -90,12 +99,16 @@ const Login = () => {
 
           <div className="text-center mt-3">
             <small className="text-muted">Don't have an account?</small>
-            <a href="#" className="ms-1 text-decoration-none text-success">
+            <Link
+              to="/signup"
+              className="ms-1 text-decoration-none text-success"
+            >
               Sign up
-            </a>
+            </Link>
           </div>
         </form>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
