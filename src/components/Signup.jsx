@@ -9,6 +9,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [existingUser, setExistingUser] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -117,7 +118,11 @@ const Signup = () => {
 
         <div className="text-center mt-3">
           <span className="text-muted">Have an account? </span>
-          <a href="#" className="text-decoration-none fw-semibold text-primary">
+          <a
+            href="#"
+            className="text-decoration-none fw-semibold text-primary"
+            onClick={() => setExistingUser(true)}
+          >
             Login
           </a>
         </div>
