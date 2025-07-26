@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import Home from './Home';
 import { Link, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,7 +11,6 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const tokenId = localStorage.getItem('token');
   const history = useHistory();
 
   const togglePasswordVisibility = () => {
@@ -92,9 +90,12 @@ const Login = () => {
           </button>
 
           <div className="text-center">
-            <a href="#" className="text-decoration-none text-primary">
+            <Link
+              to="/password-reset"
+              className="text-decoration-none text-primary"
+            >
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <div className="text-center mt-3">

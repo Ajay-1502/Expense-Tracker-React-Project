@@ -114,7 +114,7 @@ const CompleteProfile = () => {
         </button>
       </div>
 
-      <div className="card shadow-lg profile-card mt-3">
+      <div className="card shadow-lg profile-card mt-5">
         <div className="card-body">
           <h2 className="card-title text-center mb-4">Update Profile</h2>
           <form onSubmit={formSubmitHandler}>
