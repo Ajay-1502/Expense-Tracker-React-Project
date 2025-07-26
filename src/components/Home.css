@@ -1,3 +1,18 @@
+.logout-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-container button {
+  border: none;
+  padding: 8px 16px;
+  margin-right: 2rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .homepage-container {
   max-width: 900px;
   margin: 50px auto;
