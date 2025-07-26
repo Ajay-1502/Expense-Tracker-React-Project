@@ -6,9 +6,9 @@ const Home = () => {
     <div className="homepage-container">
       <div className="banner">
         <p>
-          Your profile is <span className="incomplete">Incomplete.</span>
+          <span className="incomplete">You can update your profile.</span>
           <Link to="/complete-profile" className="complete-now">
-            Complete now
+            Update My Profile
           </Link>
         </p>
       </div>

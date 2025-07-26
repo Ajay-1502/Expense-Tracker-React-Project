@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import './CompleteProfile.css';
+import { Link } from 'react-router-dom';
 
 const CompleteProfile = () => {
   const [name, setName] = useState('');
@@ -16,7 +17,7 @@ const CompleteProfile = () => {
         body: JSON.stringify({
           idToken: tokenId,
         }),
-        header: {
+        headers: {
           'Content-type': 'application/json',
         },
       }
@@ -49,7 +50,7 @@ const CompleteProfile = () => {
             photoUrl: imageUrl,
             returnSecureToken: true,
           }),
-          header: {
+          headers: {
             'Content-type': 'application/json',
           },
         }
@@ -68,9 +69,36 @@ const CompleteProfile = () => {
     }
   }
 
+  async function verifyEmail(tokenId) {
+    try {
+      const response = await fetch(
+        'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyC2R6CqvtCPts67hiewAs0OXvYjQKeIG64',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            requestType: 'VERIFY_EMAIL',
+            idToken: tokenId,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error.message || 'Email Verification Failed');
+      }
+      const data = await response.json();
+      console.log(data);
+      toast.success('Verification link is sent to your email');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
   return (
     <div className="update-profile-container mt-0">
-      <div className="alert alert-info d-flex justify-content-between align-items-center banner-box ">
+      <div className="alert alert-info d-flex justify-content-between align-items-center banner-box">
         <p className="mb-0">
           🚀{' '}
           <strong>
@@ -78,7 +106,12 @@ const CompleteProfile = () => {
             Complete profile improves your experience on the platform
           </strong>
         </p>
-        <p className="btn btn-link p-0 complete-link">Complete Now</p>
+        <button
+          className="btn btn-link p-0 complete-link"
+          onClick={() => verifyEmail(tokenId)}
+        >
+          Verify Email
+        </button>
       </div>
 
       <div className="card shadow-lg profile-card mt-3">

@@ -46,8 +46,8 @@ const Login = () => {
       }
       const data = await response.json();
       console.log(data);
-      localStorage.setItem('token', data.idToken);
       toast.success('Login Successful 🎉');
+      localStorage.setItem('token', data.idToken);
       history.push('/home');
     } catch (err) {
       toast.error(err.message);
