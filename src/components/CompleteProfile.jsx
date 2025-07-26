@@ -1,9 +1,32 @@
 import { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 import './CompleteProfile.css';
 
 const CompleteProfile = () => {
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+
+  const tokenId = localStorage.getItem('token');
+
+  async function getUserData(tokenId) {
+    const response = await fetch(
+      'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyC2R6CqvtCPts67hiewAs0OXvYjQKeIG64',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          idToken: tokenId,
+        }),
+        header: {
+          'Content-type': 'application/json',
+        },
+      }
+    );
+    const data = await response.json();
+    setName(data.users[0].displayName);
+    setImageUrl(data.users[0].photoUrl);
+  }
+
+  getUserData(tokenId);
 
   async function formSubmitHandler(e) {
     e.preventDefault();
@@ -21,7 +44,7 @@ const CompleteProfile = () => {
         {
           method: 'POST',
           body: JSON.stringify({
-            idToken: localStorage.getItem('token'),
+            idToken: tokenId,
             displayName: name,
             photoUrl: imageUrl,
             returnSecureToken: true,
@@ -39,9 +62,9 @@ const CompleteProfile = () => {
       }
       const data = await response.json();
       console.log(data);
-      alert('Your Profile is updated successfully');
+      toast.success('Your Profile is updated successfully 🎉');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   }
 
@@ -99,6 +122,7 @@ const CompleteProfile = () => {
           </form>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
