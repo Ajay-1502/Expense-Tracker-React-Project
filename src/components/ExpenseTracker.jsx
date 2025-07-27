@@ -53,6 +53,39 @@ const ExpenseTracker = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const deleteExpenseHandler = async (expenseId) => {
+    const response = await fetch(
+      `https://expense-tracker-react-f5b85-default-rtdb.firebaseio.com/expenses/${expenseId}.json`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const data = await response.json();
+    setExpenses((prev) => {
+      return prev.filter((expense) => {
+        return expense.id != expenseId;
+      });
+    });
+    console.log(data);
+  };
+
+  const editExpenseHandler = async (
+    amount,
+    description,
+    category,
+    expenseId
+  ) => {
+    setFormData({
+      amount: amount,
+      description: description,
+      category: category,
+    });
+    await deleteExpenseHandler(expenseId);
+  };
+
   useEffect(() => {
     return async () => {
       try {
@@ -80,7 +113,7 @@ const ExpenseTracker = () => {
         console.log(err.message);
       }
     };
-  }, []);
+  }, [expenses]);
 
   return (
     <Container className="mt-5 expense-container">
@@ -154,8 +187,33 @@ const ExpenseTracker = () => {
               >
                 <div>
                   <strong>₹{exp.amount}</strong> - {exp.description}
+                  <span className="badge bg-secondary d-flex justify-content-center align-items-center ">
+                    {exp.category}
+                  </span>
                 </div>
-                <span className="badge bg-secondary">{exp.category}</span>
+                <div className="d-flex gap-2">
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={() =>
+                      editExpenseHandler(
+                        exp.amount,
+                        exp.description,
+                        exp.category,
+                        exp.id
+                      )
+                    }
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => deleteExpenseHandler(exp.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
