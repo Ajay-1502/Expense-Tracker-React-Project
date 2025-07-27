@@ -1,4 +1,5 @@
 import { Link, useHistory } from 'react-router-dom';
+import ExpenseTracker from './ExpenseTracker';
 import './Home.css';
 
 const Home = () => {
@@ -32,6 +33,7 @@ const Home = () => {
           Track, manage, and control your expenses like a pro!
         </p>
       </div>
+      <ExpenseTracker />
     </>
   );
 };
