@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 
 const ExpenseTracker = () => {
@@ -9,23 +10,77 @@ const ExpenseTracker = () => {
     category: 'Food',
   });
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     if (
       formData.amount.trim().length === 0 ||
       formData.description.trim().length === 0
     ) {
-      alert('Input fields cannot be empty');
+      toast.error('Input fields cannot be empty');
       return;
     }
 
+    try {
+      const response = await fetch(
+        'https://expense-tracker-react-f5b85-default-rtdb.firebaseio.com/expenses.json',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            amount: formData.amount,
+            description: formData.description,
+            category: formData.category,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error.message || 'Failed to send data to backend'
+        );
+      }
+      const data = await response.json();
+      setFormData({ amount: '', description: '', category: 'Food' });
+    } catch (err) {
+      console.log(err.message);
+    }
     setExpenses((prev) => [...prev, formData]);
-    setFormData({ amount: '', description: '', category: 'Food' });
   };
 
   const changeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    return async () => {
+      try {
+        const response = await fetch(
+          ' https://expense-tracker-react-f5b85-default-rtdb.firebaseio.com/expenses.json'
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error.message);
+        }
+        const data = await response.json();
+
+        let expensesReceived = [];
+        for (let key in data) {
+          expensesReceived.push({
+            id: key,
+            amount: data[key].amount,
+            description: data[key].description,
+            category: data[key].category,
+          });
+        }
+        setExpenses(expensesReceived);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+  }, []);
 
   return (
     <Container className="mt-5 expense-container">
@@ -106,6 +161,7 @@ const ExpenseTracker = () => {
           </ul>
         </Card>
       )}
+      <ToastContainer postion="top-right" autoClose={3000} />
     </Container>
   );
 };
