@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../store/authSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,6 +12,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
 
   const history = useHistory();
 
@@ -44,6 +48,7 @@ const Login = () => {
       }
       const data = await response.json();
       console.log(data);
+      dispatch(authActions.login());
       toast.success('Login Successful 🎉');
       localStorage.setItem('token', data.idToken);
       history.push('/home');
