@@ -1,11 +1,15 @@
 import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../store/authSlice';
 import ExpenseTracker from './ExpenseTracker';
 import './Home.css';
 
 const Home = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const logoutHandler = () => {
+    dispatch(authActions.logout());
     history.push('/');
     localStorage.removeItem('token');
   };

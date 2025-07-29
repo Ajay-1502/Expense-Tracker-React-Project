@@ -48,7 +48,7 @@ const Login = () => {
       }
       const data = await response.json();
       console.log(data);
-      dispatch(authActions.login());
+      dispatch(authActions.login({ idToken: data.idToken, email: data.email }));
       toast.success('Login Successful 🎉');
       localStorage.setItem('token', data.idToken);
       history.push('/home');
