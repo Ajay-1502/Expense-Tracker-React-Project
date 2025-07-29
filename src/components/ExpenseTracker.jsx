@@ -1,14 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { expenseActions } from '../store/expenseSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 
 const ExpenseTracker = () => {
-  const [expenses, setExpenses] = useState([]);
   const [formData, setFormData] = useState({
     amount: '',
     description: '',
     category: 'Food',
   });
+
+  const expenses = useSelector((state) => state.expense.expenses);
+  const dispatch = useDispatch();
+
+  const totalAmount = expenses.reduce((total, expense) => {
+    return total + Number(expense.amount);
+  }, 0);
+
+  useEffect(() => {
+    if (totalAmount > 10000) {
+      alert('Activate Premium Membership');
+    }
+  }, [totalAmount]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -41,17 +55,45 @@ const ExpenseTracker = () => {
           errorData.error.message || 'Failed to send data to backend'
         );
       }
-      const data = await response.json();
+
       setFormData({ amount: '', description: '', category: 'Food' });
+      fetchExpenses();
     } catch (err) {
       console.log(err.message);
     }
-    setExpenses((prev) => [...prev, formData]);
   };
 
   const changeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const fetchExpenses = useCallback(async () => {
+    try {
+      const response = await fetch(
+        ' https://expense-tracker-react-f5b85-default-rtdb.firebaseio.com/expenses.json'
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error.message);
+      }
+      const data = await response.json();
+
+      let expensesReceived = [];
+      for (let key in data) {
+        expensesReceived.push({
+          id: key,
+          amount: data[key].amount,
+          description: data[key].description,
+          category: data[key].category,
+        });
+      }
+
+      dispatch(expenseActions.expenseList(expensesReceived));
+    } catch (err) {
+      console.log(err.message);
+    }
+  }, [dispatch]);
 
   const deleteExpenseHandler = async (expenseId) => {
     const response = await fetch(
@@ -64,12 +106,9 @@ const ExpenseTracker = () => {
       }
     );
     const data = await response.json();
-    setExpenses((prev) => {
-      return prev.filter((expense) => {
-        return expense.id != expenseId;
-      });
-    });
-    console.log(data);
+    dispatch(
+      expenseActions.expenseList(expenses.filter((exp) => exp.id != expenseId))
+    );
   };
 
   const editExpenseHandler = async (
@@ -87,33 +126,8 @@ const ExpenseTracker = () => {
   };
 
   useEffect(() => {
-    return async () => {
-      try {
-        const response = await fetch(
-          ' https://expense-tracker-react-f5b85-default-rtdb.firebaseio.com/expenses.json'
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error.message);
-        }
-        const data = await response.json();
-
-        let expensesReceived = [];
-        for (let key in data) {
-          expensesReceived.push({
-            id: key,
-            amount: data[key].amount,
-            description: data[key].description,
-            category: data[key].category,
-          });
-        }
-        setExpenses(expensesReceived);
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
-  }, [expenses]);
+    fetchExpenses();
+  }, [fetchExpenses]);
 
   return (
     <Container className="mt-5 expense-container">
@@ -175,9 +189,9 @@ const ExpenseTracker = () => {
         <Card className="mt-4 p-3 shadow-sm">
           <h5 className="mb-3 text-success">Expenses List</h5>
           <ul className="list-group">
-            {expenses.map((exp, index) => (
+            {expenses.map((exp) => (
               <li
-                key={index}
+                key={exp.id}
                 className="list-group-item d-flex justify-content-between align-items-center"
                 style={{
                   borderLeft: '5px solid #0d6efd',
