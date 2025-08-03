@@ -130,7 +130,7 @@ const ExpenseTracker = () => {
   }, [fetchExpenses]);
 
   return (
-    <Container className="mt-5 expense-container">
+    <Container className="mt-4 expense-container">
       <Card className="p-4 shadow-lg expense-card mt-0">
         <h3 className="text-center mb-4 text-primary">Expense Tracker</h3>
         <Form onSubmit={submitHandler}>
