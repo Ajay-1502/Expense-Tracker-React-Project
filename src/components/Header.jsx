@@ -1,12 +1,19 @@
 import { Link, useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../store/authSlice';
+import { themeActions } from '../store/themeSlice';
 import nightModeIcon from '../assets/night-mode_12301305.png';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const theme = useSelector((state) => state.theme.mode);
+
+  const toggleTheme = () => {
+    dispatch(themeActions.toggleTheme());
+  };
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
@@ -50,7 +57,10 @@ const Header = () => {
                 Premium
               </Nav.Link>
               <Nav.Link className="mx-2">
-                <button className="bg-transparent border-0 p-0">
+                <button
+                  className="bg-transparent border-0 p-0"
+                  onClick={toggleTheme}
+                >
                   <img
                     src={nightModeIcon}
                     alt="Theme Toggle"
