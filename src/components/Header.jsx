@@ -9,10 +9,42 @@ const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const theme = useSelector((state) => state.theme.mode);
+  const expenses = useSelector((state) => state.expense.expenses);
 
   const toggleTheme = () => {
     dispatch(themeActions.toggleTheme());
+  };
+
+  const downloadExpensesHandler = () => {
+    if (expenses.length === 0) {
+      alert('No expenses found');
+      return;
+    }
+
+    const header = ['SL.No', 'Amount(Rupees)', 'Category', 'Description'];
+    const rows = expenses.map((exp, index) => [
+      index + 1,
+      exp.amount,
+      exp.category,
+      exp.description,
+    ]);
+
+    const csvContent = [header, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'expenses.csv';
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link);
   };
 
   const logoutHandler = () => {
@@ -72,6 +104,13 @@ const Header = () => {
                   />
                 </button>
               </Nav.Link>
+              <Button
+                variant="success"
+                className="me-2 text-white"
+                onClick={downloadExpensesHandler}
+              >
+                Download Expenses
+              </Button>
             </Nav>
 
             <Button
