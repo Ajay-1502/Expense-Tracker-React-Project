@@ -81,13 +81,7 @@ const Header = () => {
               >
                 Profile
               </Nav.Link>
-              <Nav.Link
-                as={Link}
-                to="/home"
-                className="mx-2 fw-bold text-white"
-              >
-                Premium
-              </Nav.Link>
+
               <Nav.Link className="mx-2">
                 <button
                   className="bg-transparent border-0 p-0"

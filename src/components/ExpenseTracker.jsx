@@ -14,16 +14,6 @@ const ExpenseTracker = () => {
   const expenses = useSelector((state) => state.expense.expenses);
   const dispatch = useDispatch();
 
-  const totalAmount = expenses.reduce((total, expense) => {
-    return total + Number(expense.amount);
-  }, 0);
-
-  useEffect(() => {
-    if (totalAmount > 10000) {
-      alert('Activate Premium Membership');
-    }
-  }, [totalAmount]);
-
   const submitHandler = async (e) => {
     e.preventDefault();
     if (
